@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useEffect, useState } from "react";
+import { db, collection, getDocs } from "./firebase";
 
 function App() {
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const studentsCollection = collection(db, "students");
+      const studentSnapshot = await getDocs(studentsCollection);
+      const studentList = studentSnapshot.docs.map((doc) => doc.data());
+      setStudents(studentList);
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Data Mahasiswa</h1>
+      <ul>
+        {students.map((student, index) => (
+          <li key={index}>
+            <strong>Nama:</strong> {student.nama} <br />
+            <strong>NPM:</strong> {student.npm} <br />
+            <strong>Tempat Lahir:</strong> {student.tempat_lahir}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
